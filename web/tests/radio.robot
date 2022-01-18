@@ -16,4 +16,4 @@ Selecionando por Id
 Selecionando por value
     Go To                            ${url}/radios
     Select Radio Button              movies           guardians 
-    Radio Button Should Be Set To    movies           guardians 
+    Radio Button Should Be Set To    movies           guardians
