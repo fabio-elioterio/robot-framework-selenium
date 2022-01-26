@@ -7,9 +7,7 @@ Test Teardown    Encerra sessão
 *** Test Cases ***
 Login com sucesso usando css selector
     Go to                  ${url}/login
-    Input Text             css:input[name=username]                        stark
-    Input Text             css:input[name=password]                        jarvis!
-    Click Element          class:btn-login
+    Login With             stark                                           jarvis!
     Page Should Contain    Olá, Tony Stark. Você acessou a área logada!
 
 Login com sucesso usando id
@@ -20,21 +18,28 @@ Login com sucesso usando id
     Page Should Contain    Olá, Tony Stark. Você acessou a área logada!
 
 Senha inválida
-    [tags]           password_error
-    Go to            ${url}/login
-    Input Text       id:userId          stark
-    Input Text       id:passId          abc123
-    Click Element    class:btn-login
-
-    ${error_message}=    Get WebElement           id:flash
-    Should Contain       ${error_message.text}    Senha é invalida!
+    [tags]                        password_error
+    Go to                         ${url}/login
+    Login With                    stark                abc123
+    Should Contain Login Alert    Senha é invalida!
 
 Usuário inválido
-    [tags]           user_error
-    Go to            ${url}/login
-    Input Text       id:userId          fabio
-    Input Text       id:passId          jarvis!
+    [tags]        user_error
+    Go to         ${url}/login
+    Login With    fabio           jarvis!
+
+    Should Contain Login Alert    O usuário informado não está cadastrado!
+
+*** Keywords ***
+Login With
+    [Arguments]      ${username}                 ${password}
+
+    Input Text       css:input[name=username]    ${username} 
+    Input Text       css:input[name=password]    ${password}
     Click Element    class:btn-login
 
-    ${error_message}=    Get WebElement           id:flash
-    Should Contain       ${error_message.text}    O usuário informado não está cadastrado!
+Should Contain Login Alert
+    [Arguments]          ${expected_error_message}
+    
+    ${error_message}=    Get WebElement               id:flash
+    Should Contain       ${error_message.text}        ${expected_error_message}
